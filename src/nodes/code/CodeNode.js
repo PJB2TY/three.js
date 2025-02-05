@@ -138,8 +138,47 @@ class CodeNode extends Node {
 
 export default CodeNode;
 
+/**
+ * TSL function for creating a code node.
+ *
+ * @tsl
+ * @function
+ * @param {String} [code=''] - The native code.
+ * @param {Array<Node>} [includes=[]] - An array of includes.
+ * @param {('js'|'wgsl'|'glsl')} [language=''] - The used language.
+ * @returns {CodeNode}
+ */
 export const code = /*@__PURE__*/ nodeProxy( CodeNode );
 
+/**
+ * TSL function for creating a JS code node.
+ *
+ * @tsl
+ * @function
+ * @param {String} src - The native code.
+ * @param {Array<Node>} includes - An array of includes.
+ * @returns {CodeNode}
+ */
 export const js = ( src, includes ) => code( src, includes, 'js' );
+
+/**
+ * TSL function for creating a WGSL code node.
+ *
+ * @tsl
+ * @function
+ * @param {String} src - The native code.
+ * @param {Array<Node>} includes - An array of includes.
+ * @returns {CodeNode}
+ */
 export const wgsl = ( src, includes ) => code( src, includes, 'wgsl' );
+
+/**
+ * TSL function for creating a GLSL code node.
+ *
+ * @tsl
+ * @function
+ * @param {String} src - The native code.
+ * @param {Array<Node>} includes - An array of includes.
+ * @returns {CodeNode}
+ */
 export const glsl = ( src, includes ) => code( src, includes, 'glsl' );

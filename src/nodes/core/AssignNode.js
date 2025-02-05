@@ -162,6 +162,15 @@ class AssignNode extends TempNode {
 
 export default AssignNode;
 
+/**
+ * TSL function for creating an assign node.
+ *
+ * @tsl
+ * @function
+ * @param {Node} targetNode - The target node.
+ * @param {Node} sourceNode - The source type.
+ * @returns {AssignNode}
+ */
 export const assign = /*@__PURE__*/ nodeProxy( AssignNode );
 
 addMethodChaining( 'assign', assign );

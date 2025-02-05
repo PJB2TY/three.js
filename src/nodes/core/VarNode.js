@@ -24,8 +24,9 @@ class VarNode extends Node {
 	 *
 	 * @param {Node} node - The node for which a variable should be created.
 	 * @param {String?} name - The name of the variable in the shader.
+	 * @param {Boolean?} readOnly - The read-only flag.
 	 */
-	constructor( node, name = null ) {
+	constructor( node, name = null, readOnly = false ) {
 
 		super();
 
@@ -62,11 +63,32 @@ class VarNode extends Node {
 		 */
 		this.isVarNode = true;
 
+		/**
+		 *
+		 * The read-only flag.
+		 *
+		 * @type {Boolean}
+		 * @default false
+		 */
+		this.readOnly = readOnly;
+
 	}
 
 	getHash( builder ) {
 
 		return this.name || super.getHash( builder );
+
+	}
+
+	getMemberType( builder, name ) {
+
+		return this.node.getMemberType( builder, name );
+
+	}
+
+	getElementType( builder ) {
+
+		return this.node.getElementType( builder );
 
 	}
 
@@ -78,15 +100,50 @@ class VarNode extends Node {
 
 	generate( builder ) {
 
-		const { node, name } = this;
+		const { node, name, readOnly } = this;
+		const { renderer } = builder;
 
-		const nodeVar = builder.getVarFromNode( this, name, builder.getVectorType( this.getNodeType( builder ) ) );
+		const isWebGPUBackend = renderer.backend.isWebGPUBackend === true;
+
+		let isDeterministic = false;
+		let shouldTreatAsReadOnly = false;
+
+		if ( readOnly ) {
+
+			isDeterministic = builder.isDeterministic( node );
+
+			shouldTreatAsReadOnly = isWebGPUBackend ? readOnly : isDeterministic;
+
+		}
+
+		const vectorType = builder.getVectorType( this.getNodeType( builder ) );
+		const snippet = node.build( builder, vectorType );
+
+		const nodeVar = builder.getVarFromNode( this, name, vectorType, undefined, shouldTreatAsReadOnly );
 
 		const propertyName = builder.getPropertyName( nodeVar );
 
-		const snippet = node.build( builder, nodeVar.type );
+		let declarationPrefix = propertyName;
 
-		builder.addLineFlowCode( `${propertyName} = ${snippet}`, this );
+		if ( shouldTreatAsReadOnly ) {
+
+			if ( isWebGPUBackend ) {
+
+				declarationPrefix = isDeterministic
+					? `const ${ propertyName }`
+					: `let ${ propertyName }`;
+
+			} else {
+
+				const count = builder.getArrayCount( node );
+
+				declarationPrefix = `const ${ builder.getVar( nodeVar.type, propertyName, count ) }`;
+
+			}
+
+		}
+
+		builder.addLineFlowCode( `${ declarationPrefix } = ${ snippet }`, this );
 
 		return propertyName;
 
@@ -96,15 +153,57 @@ class VarNode extends Node {
 
 export default VarNode;
 
+/**
+ * TSL function for creating a var node.
+ *
+ * @tsl
+ * @function
+ * @param {Node} node - The node for which a variable should be created.
+ * @param {String?} name - The name of the variable in the shader.
+ * @returns {VarNode}
+ */
 const createVar = /*@__PURE__*/ nodeProxy( VarNode );
 
-addMethodChaining( 'toVar', ( ...params ) => createVar( ...params ).append() );
+/**
+ * TSL function for creating a var node.
+ *
+ * @tsl
+ * @function
+ * @param {Node} node - The node for which a variable should be created.
+ * @param {String?} name - The name of the variable in the shader.
+ * @returns {VarNode}
+ */
+export const Var = ( node, name = null ) => createVar( node, name ).append();
+
+/**
+ * TSL function for creating a const node.
+ *
+ * @tsl
+ * @function
+ * @param {Node} node - The node for which a constant should be created.
+ * @param {String?} name - The name of the constant in the shader.
+ * @returns {VarNode}
+ */
+export const Const = ( node, name = null ) => createVar( node, name, true ).append();
+
+// Method chaining
+
+addMethodChaining( 'toVar', Var );
+addMethodChaining( 'toConst', Const );
 
 // Deprecated
 
+/**
+ * @tsl
+ * @function
+ * @deprecated since r170. Use `Var( node )` or `node.toVar()` instead.
+ *
+ * @param {Any} node
+ * @returns {VarNode}
+ */
 export const temp = ( node ) => { // @deprecated, r170
 
-	console.warn( 'TSL: "temp" is deprecated. Use ".toVar()" instead.' );
+	console.warn( 'TSL: "temp( node )" is deprecated. Use "Var( node )" or "node.toVar()" instead.' );
 
 	return createVar( node );
 

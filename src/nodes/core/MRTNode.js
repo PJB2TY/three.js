@@ -139,4 +139,12 @@ class MRTNode extends OutputStructNode {
 
 export default MRTNode;
 
+/**
+ * TSL function for creating a MRT node.
+ *
+ * @tsl
+ * @function
+ * @param {Object<String, Node>} outputNodes - The MRT outputs.
+ * @returns {MRTNode}
+ */
 export const mrt = /*@__PURE__*/ nodeProxy( MRTNode );

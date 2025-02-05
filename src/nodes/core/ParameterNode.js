@@ -51,4 +51,13 @@ class ParameterNode extends PropertyNode {
 
 export default ParameterNode;
 
+/**
+ * TSL function for creating a parameter node.
+ *
+ * @tsl
+ * @function
+ * @param {String} type - The type of the node.
+ * @param {String?} name - The name of the parameter in the shader.
+ * @returns {ParameterNode}
+ */
 export const parameter = ( type, name ) => nodeObject( new ParameterNode( type, name ) );

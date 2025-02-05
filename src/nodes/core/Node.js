@@ -125,6 +125,7 @@ class Node extends EventDispatcher {
 	 *
 	 * @type {Boolean}
 	 * @default false
+	 * @param {boolean} value
 	 */
 	set needsUpdate( value ) {
 
@@ -333,7 +334,6 @@ class Node extends EventDispatcher {
 	 * Generate a custom cache key for this node.
 	 *
 	 * @return {Number} The cache key of the node.
-	 * @default 0
 	 */
 	customCacheKey() {
 
@@ -417,6 +417,19 @@ class Node extends EventDispatcher {
 	}
 
 	/**
+	 * Returns the node member type for the given name.
+	 *
+	 * @param {NodeBuilder} builder - The current node builder.
+	 * @param {String} name - The name of the member.
+	 * @return {String} The type of the node.
+	 */
+	getMemberType( /*uilder, name*/ ) {
+
+		return 'void';
+
+	}
+
+	/**
 	 * Returns the node's type.
 	 *
 	 * @param {NodeBuilder} builder - The current node builder.
@@ -474,8 +487,9 @@ class Node extends EventDispatcher {
 
 		}
 
-		// return a outputNode if exists
-		return null;
+		// return a outputNode if exists or null
+
+		return nodeProperties.outputNode || null;
 
 	}
 
@@ -533,6 +547,7 @@ class Node extends EventDispatcher {
 	 * The method can be implemented to update the node's internal state before it is used to render an object.
 	 * The {@link Node#updateBeforeType} property defines how often the update is executed.
 	 *
+	 * @abstract
 	 * @param {NodeFrame} frame - A reference to the current node frame.
 	 * @return {Boolean?} An optional bool that indicates whether the implementation actually performed an update or not (e.g. due to caching).
 	 */
@@ -546,6 +561,7 @@ class Node extends EventDispatcher {
 	 * The method can be implemented to update the node's internal state after it was used to render an object.
 	 * The {@link Node#updateAfterType} property defines how often the update is executed.
 	 *
+	 * @abstract
 	 * @param {NodeFrame} frame - A reference to the current node frame.
 	 * @return {Boolean?} An optional bool that indicates whether the implementation actually performed an update or not (e.g. due to caching).
 	 */
@@ -559,6 +575,7 @@ class Node extends EventDispatcher {
 	 * The method can be implemented to update the node's internal state when it is used to render an object.
 	 * The {@link Node#updateType} property defines how often the update is executed.
 	 *
+	 * @abstract
 	 * @param {NodeFrame} frame - A reference to the current node frame.
 	 * @return {Boolean?} An optional bool that indicates whether the implementation actually performed an update or not (e.g. due to caching).
 	 */
@@ -606,17 +623,19 @@ class Node extends EventDispatcher {
 
 			if ( properties.initialized !== true ) {
 
-				const stackNodesBeforeSetup = builder.stack.nodes.length;
+				//const stackNodesBeforeSetup = builder.stack.nodes.length;
 
 				properties.initialized = true;
-				properties.outputNode = this.setup( builder );
 
-				if ( properties.outputNode !== null && builder.stack.nodes.length !== stackNodesBeforeSetup ) {
+				const outputNode = this.setup( builder ); // return a node or null
+				const isNodeOutput = outputNode && outputNode.isNode === true;
+
+				/*if ( isNodeOutput && builder.stack.nodes.length !== stackNodesBeforeSetup ) {
 
 					// !! no outputNode !!
-					//properties.outputNode = builder.stack;
+					//outputNode = builder.stack;
 
-				}
+				}*/
 
 				for ( const childNode of Object.values( properties ) ) {
 
@@ -627,6 +646,14 @@ class Node extends EventDispatcher {
 					}
 
 				}
+
+				if ( isNodeOutput ) {
+
+					outputNode.build( builder );
+
+				}
+
+				properties.outputNode = outputNode;
 
 			}
 
@@ -677,7 +704,7 @@ class Node extends EventDispatcher {
 	/**
 	 * Returns the child nodes as a JSON object.
 	 *
-	 * @return {Object} The serialized child objects as JSON.
+	 * @return {Array<Object>} An iterable list of serialized child objects as JSON.
 	 */
 	getSerializeChildren() {
 

@@ -39,4 +39,11 @@ class MatcapUVNode extends TempNode {
 
 export default MatcapUVNode;
 
+/**
+ * TSL function for creating a matcap uv node.
+ *
+ * @tsl
+ * @function
+ * @returns {MatcapUVNode}
+ */
 export const matcapUV = /*@__PURE__*/ nodeImmutable( MatcapUVNode );

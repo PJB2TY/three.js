@@ -17,7 +17,7 @@ const _size = /*@__PURE__*/ new Vector2();
  * texture input for their effects. With the helper function `convertToTexture()` which is based
  * on this module, the node system can automatically ensure texture input if required.
  *
- * @augments Node
+ * @augments TextureNode
  */
 class RTTNode extends TextureNode {
 
@@ -228,8 +228,30 @@ class RTTNode extends TextureNode {
 
 export default RTTNode;
 
+/**
+ * TSL function for creating a RTT node.
+ *
+ * @tsl
+ * @function
+ * @param {Node} node - The node to render a texture with.
+ * @param {Number?} [width=null] - The width of the internal render target. If not width is applied, the render target is automatically resized.
+ * @param {Number?} [height=null] - The height of the internal render target.
+ * @param {Object} [options={type:HalfFloatType}] - The options for the internal render target.
+ * @returns {RTTNode}
+ */
 export const rtt = ( node, ...params ) => nodeObject( new RTTNode( nodeObject( node ), ...params ) );
 
+/**
+ * TSL function for converting nodes to textures nodes.
+ *
+ * @tsl
+ * @function
+ * @param {Node} node - The node to render a texture with.
+ * @param {Number?} [width=null] - The width of the internal render target. If not width is applied, the render target is automatically resized.
+ * @param {Number?} [height=null] - The height of the internal render target.
+ * @param {Object} [options={type:HalfFloatType}] - The options for the internal render target.
+ * @returns {RTTNode}
+ */
 export const convertToTexture = ( node, ...params ) => {
 
 	if ( node.isTextureNode ) return node;

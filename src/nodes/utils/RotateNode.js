@@ -90,4 +90,14 @@ class RotateNode extends TempNode {
 
 export default RotateNode;
 
+/**
+ * TSL function for creating a rotate node.
+ *
+ * @tsl
+ * @function
+ * @param {Node} positionNode - The position node.
+ * @param {Node} rotationNode - Represents the rotation that is applied to the position node. Depending
+ * on whether the position data are 2D or 3D, the rotation is expressed a single float value or an Euler value.
+ * @returns {RotateNode}
+ */
 export const rotate = /*@__PURE__*/ nodeProxy( RotateNode );

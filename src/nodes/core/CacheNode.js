@@ -54,7 +54,16 @@ class CacheNode extends Node {
 
 	getNodeType( builder ) {
 
-		return this.node.getNodeType( builder );
+		const previousCache = builder.getCache();
+		const cache = builder.getCacheFromNode( this, this.parent );
+
+		builder.setCache( cache );
+
+		const nodeType = this.node.getNodeType( builder );
+
+		builder.setCache( previousCache );
+
+		return nodeType;
 
 	}
 
@@ -77,6 +86,15 @@ class CacheNode extends Node {
 
 export default CacheNode;
 
-export const cache = ( node, ...params ) => nodeObject( new CacheNode( nodeObject( node ), ...params ) );
+/**
+ * TSL function for creating a cache node.
+ *
+ * @tsl
+ * @function
+ * @param {Node} node - The node that should be cached.
+ * @param {Boolean} parent - Whether this node refers to a shared parent cache or not.
+ * @returns {CacheNode}
+ */
+export const cache = ( node, parent ) => nodeObject( new CacheNode( nodeObject( node ), parent ) );
 
 addMethodChaining( 'cache', cache );

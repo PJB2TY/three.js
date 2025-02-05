@@ -15,7 +15,7 @@ class ArrayElementNode extends Node { // @TODO: If extending from TempNode it br
 	}
 
 	/**
-	 * Constructs array element node.
+	 * Constructs an array element node.
 	 *
 	 * @param {Node} node - The array-like node.
 	 * @param {Node} indexNode - The index node that defines the element access.
@@ -66,7 +66,7 @@ class ArrayElementNode extends Node { // @TODO: If extending from TempNode it br
 		const nodeSnippet = this.node.build( builder );
 		const indexSnippet = this.indexNode.build( builder, 'uint' );
 
-		return `${nodeSnippet}[ ${indexSnippet} ]`;
+		return `${ nodeSnippet }[ ${ indexSnippet } ]`;
 
 	}
 

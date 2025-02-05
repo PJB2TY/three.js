@@ -74,6 +74,12 @@ class StackNode extends Node {
 
 	}
 
+	getMemberType( builder, name ) {
+
+		return this.outputNode ? this.outputNode.getMemberType( builder, name ) : 'void';
+
+	}
+
 	/**
 	 * Adds a node to this stack.
 	 *
@@ -155,8 +161,15 @@ class StackNode extends Node {
 
 	}
 
-	//
+	// Deprecated
 
+	/**
+	 * @function
+	 * @deprecated since r168. Use {@link StackNode#Else} instead.
+	 *
+	 * @param  {...any} params
+	 * @returns {StackNode}
+	 */
 	else( ...params ) { // @deprecated, r168
 
 		console.warn( 'TSL.StackNode: .else() has been renamed to .Else().' );
@@ -164,6 +177,12 @@ class StackNode extends Node {
 
 	}
 
+	/**
+	 * @deprecated since r168. Use {@link StackNode#ElseIf} instead.
+	 *
+	 * @param  {...any} params
+	 * @returns {StackNode}
+	 */
 	elseif( ...params ) { // @deprecated, r168
 
 		console.warn( 'TSL.StackNode: .elseif() has been renamed to .ElseIf().' );
@@ -175,4 +194,12 @@ class StackNode extends Node {
 
 export default StackNode;
 
+/**
+ * TSL function for creating a stack node.
+ *
+ * @tsl
+ * @function
+ * @param {StackNode?} [parent=null] - The parent stack node.
+ * @returns {StackNode}
+ */
 export const stack = /*@__PURE__*/ nodeProxy( StackNode );

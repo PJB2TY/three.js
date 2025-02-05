@@ -16,7 +16,6 @@ const _size = /*@__PURE__*/ new Vector2();
  * Represents the texture of a pass node.
  *
  * @augments TextureNode
- * @private
  */
 class PassTextureNode extends TextureNode {
 
@@ -68,7 +67,6 @@ class PassTextureNode extends TextureNode {
  * internal texture. Relevant for the `getPreviousTexture()` related API.
  *
  * @augments PassTextureNode
- * @private
  */
 class PassMultipleTextureNode extends PassTextureNode {
 
@@ -186,7 +184,7 @@ class PassNode extends TempNode {
 		/**
 		 * A reference to the camera.
 		 *
-		 * @type {camera}
+		 * @type {Camera}
 		 */
 		this.camera = camera;
 
@@ -242,7 +240,7 @@ class PassNode extends TempNode {
 		 * A dictionary holding the internal result textures.
 		 *
 		 * @private
-		 * @type {Object}
+		 * @type {Object<String, Texture>}
 		 */
 		this._textures = {
 			output: renderTarget.texture,
@@ -253,7 +251,7 @@ class PassNode extends TempNode {
 		 * A dictionary holding the internal texture nodes.
 		 *
 		 * @private
-		 * @type {Object}
+		 * @type {Object<String, TextureNode>}
 		 */
 		this._textureNodes = {};
 
@@ -278,7 +276,7 @@ class PassNode extends TempNode {
 		 * Used for computing velocity/motion vectors.
 		 *
 		 * @private
-		 * @type {Object}
+		 * @type {Object<String, Texture>}
 		 */
 		this._previousTextures = {};
 
@@ -287,7 +285,7 @@ class PassNode extends TempNode {
 		 * Used for computing velocity/motion vectors.
 		 *
 		 * @private
-		 * @type {Object}
+		 * @type {Object<String, TextureNode>}
 		 */
 		this._previousTextureNodes = {};
 
@@ -546,12 +544,14 @@ class PassNode extends TempNode {
 
 		this.renderTarget.samples = this.options.samples === undefined ? renderer.samples : this.options.samples;
 
-		// Disable MSAA for WebGL backend for now
+		// TODO: Disable MSAA for WebGL backend for now
 		if ( renderer.backend.isWebGLBackend === true ) {
 
 			this.renderTarget.samples = 0;
 
 		}
+
+		this.renderTarget.texture.type = renderer.getColorBufferType();
 
 		return this.scope === PassNode.COLOR ? this.getTextureNode() : this.getLinearDepthNode();
 
@@ -638,6 +638,37 @@ PassNode.DEPTH = 'depth';
 
 export default PassNode;
 
+/**
+ * TSL function for creating a pass node.
+ *
+ * @tsl
+ * @function
+ * @param {Scene} scene - A reference to the scene.
+ * @param {Camera} camera - A reference to the camera.
+ * @param {Object} options - Options for the internal render target.
+ * @returns {PassNode}
+ */
 export const pass = ( scene, camera, options ) => nodeObject( new PassNode( PassNode.COLOR, scene, camera, options ) );
+
+/**
+ * TSL function for creating a pass texture node.
+ *
+ * @tsl
+ * @function
+ * @param {PassNode} pass - The pass node.
+ * @param {Texture} texture - The output texture.
+ * @returns {PassTextureNode}
+ */
 export const passTexture = ( pass, texture ) => nodeObject( new PassTextureNode( pass, texture ) );
-export const depthPass = ( scene, camera ) => nodeObject( new PassNode( PassNode.DEPTH, scene, camera ) );
+
+/**
+ * TSL function for creating a depth pass node.
+ *
+ * @tsl
+ * @function
+ * @param {Scene} scene - A reference to the scene.
+ * @param {Camera} camera - A reference to the camera.
+ * @param {Object} options - Options for the internal render target.
+ * @returns {PassNode}
+ */
+export const depthPass = ( scene, camera, options ) => nodeObject( new PassNode( PassNode.DEPTH, scene, camera, options ) );

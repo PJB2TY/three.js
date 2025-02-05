@@ -155,4 +155,13 @@ class AttributeNode extends Node {
 
 export default AttributeNode;
 
+/**
+ * TSL function for creating an attribute node.
+ *
+ * @tsl
+ * @function
+ * @param {String} name - The name of the attribute.
+ * @param {String?} nodeType - The node type.
+ * @returns {AttributeNode}
+ */
 export const attribute = ( name, nodeType ) => nodeObject( new AttributeNode( name, nodeType ) );

@@ -79,6 +79,15 @@ class BypassNode extends Node {
 
 export default BypassNode;
 
+/**
+ * TSL function for creating a bypass node.
+ *
+ * @tsl
+ * @function
+ * @param {Node} outputNode - The output node.
+ * @param {Node} callNode - The call node.
+ * @returns {BypassNode}
+ */
 export const bypass = /*@__PURE__*/ nodeProxy( BypassNode );
 
 addMethodChaining( 'bypass', bypass );

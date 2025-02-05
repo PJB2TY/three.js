@@ -62,6 +62,7 @@ class RangeNode extends Node {
 	/**
 	 * Returns the vector length which is computed based on the range definition.
 	 *
+	 * @param {NodeBuilder} builder - The current node builder.
 	 * @return {Number} The vector length.
 	 */
 	getVectorLength( builder ) {
@@ -159,4 +160,13 @@ class RangeNode extends Node {
 
 export default RangeNode;
 
+/**
+ * TSL function for creating a range node.
+ *
+ * @tsl
+ * @function
+ * @param {Node<any>} [minNode=float()] - A node defining the lower bound of the range.
+ * @param {Node<any>} [maxNode=float()] - A node defining the upper bound of the range.
+ * @returns {RangeNode}
+ */
 export const range = /*@__PURE__*/ nodeProxy( RangeNode );
