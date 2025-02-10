@@ -19,16 +19,16 @@ class TempNode extends Node {
 	/**
 	 * Constructs a temp node.
 	 *
-	 * @param {String} nodeType - The node type.
+	 * @param {?string} nodeType - The node type.
 	 */
-	constructor( type ) {
+	constructor( nodeType = null ) {
 
-		super( type );
+		super( nodeType );
 
 		/**
 		 * This flag can be used for type testing.
 		 *
-		 * @type {Boolean}
+		 * @type {boolean}
 		 * @readonly
 		 * @default true
 		 */
@@ -39,7 +39,8 @@ class TempNode extends Node {
 	/**
 	 * Whether this node is used more than once in context of other nodes.
 	 *
-	 * @return {Boolean} A flag that indicates if there is more than one dependency to other nodes.
+	 * @param {NodeBuilder} builder - The node builder.
+	 * @return {boolean} A flag that indicates if there is more than one dependency to other nodes.
 	 */
 	hasDependencies( builder ) {
 
@@ -67,7 +68,7 @@ class TempNode extends Node {
 				const nodeVar = builder.getVarFromNode( this, null, type );
 				const propertyName = builder.getPropertyName( nodeVar );
 
-				builder.addLineFlowCode( `${propertyName} = ${snippet}`, this );
+				builder.addLineFlowCode( `${ propertyName } = ${ snippet }`, this );
 
 				nodeData.snippet = snippet;
 				nodeData.propertyName = propertyName;

@@ -16,7 +16,6 @@ const _size = /*@__PURE__*/ new Vector2();
  * Represents the texture of a pass node.
  *
  * @augments TextureNode
- * @private
  */
 class PassTextureNode extends TextureNode {
 
@@ -68,7 +67,6 @@ class PassTextureNode extends TextureNode {
  * internal texture. Relevant for the `getPreviousTexture()` related API.
  *
  * @augments PassTextureNode
- * @private
  */
 class PassMultipleTextureNode extends PassTextureNode {
 
@@ -82,8 +80,8 @@ class PassMultipleTextureNode extends PassTextureNode {
 	 * Constructs a new pass texture node.
 	 *
 	 * @param {PassNode} passNode - The pass node.
-	 * @param {String} textureName - The output texture name.
-	 * @param {Boolean} [previousTexture=false] - Whether previous frame data should be used or not.
+	 * @param {string} textureName - The output texture name.
+	 * @param {boolean} [previousTexture=false] - Whether previous frame data should be used or not.
 	 */
 	constructor( passNode, textureName, previousTexture = false ) {
 
@@ -96,14 +94,14 @@ class PassMultipleTextureNode extends PassTextureNode {
 		/**
 		 * The output texture name.
 		 *
-		 * @type {String}
+		 * @type {string}
 		 */
 		this.textureName = textureName;
 
 		/**
 		 * Whether previous frame data should be used or not.
 		 *
-		 * @type {Boolean}
+		 * @type {boolean}
 		 */
 		this.previousTexture = previousTexture;
 
@@ -186,7 +184,7 @@ class PassNode extends TempNode {
 		/**
 		 * A reference to the camera.
 		 *
-		 * @type {camera}
+		 * @type {Camera}
 		 */
 		this.camera = camera;
 
@@ -201,7 +199,7 @@ class PassNode extends TempNode {
 		 * The pass's pixel ratio. Will be kept automatically kept in sync with the renderer's pixel ratio.
 		 *
 		 * @private
-		 * @type {Number}
+		 * @type {number}
 		 * @default 1
 		 */
 		this._pixelRatio = 1;
@@ -209,7 +207,7 @@ class PassNode extends TempNode {
 		/**
 		 * The pass's pixel width. Will be kept automatically kept in sync with the renderer's width.
 		 * @private
-		 * @type {Number}
+		 * @type {number}
 		 * @default 1
 		 */
 		this._width = 1;
@@ -217,7 +215,7 @@ class PassNode extends TempNode {
 		/**
 		 * The pass's pixel height. Will be kept automatically kept in sync with the renderer's height.
 		 * @private
-		 * @type {Number}
+		 * @type {number}
 		 * @default 1
 		 */
 		this._height = 1;
@@ -242,7 +240,7 @@ class PassNode extends TempNode {
 		 * A dictionary holding the internal result textures.
 		 *
 		 * @private
-		 * @type {Object}
+		 * @type {Object<string, Texture>}
 		 */
 		this._textures = {
 			output: renderTarget.texture,
@@ -253,7 +251,7 @@ class PassNode extends TempNode {
 		 * A dictionary holding the internal texture nodes.
 		 *
 		 * @private
-		 * @type {Object}
+		 * @type {Object<string, TextureNode>}
 		 */
 		this._textureNodes = {};
 
@@ -278,7 +276,7 @@ class PassNode extends TempNode {
 		 * Used for computing velocity/motion vectors.
 		 *
 		 * @private
-		 * @type {Object}
+		 * @type {Object<string, Texture>}
 		 */
 		this._previousTextures = {};
 
@@ -287,7 +285,7 @@ class PassNode extends TempNode {
 		 * Used for computing velocity/motion vectors.
 		 *
 		 * @private
-		 * @type {Object}
+		 * @type {Object<string, TextureNode>}
 		 */
 		this._previousTextureNodes = {};
 
@@ -311,7 +309,7 @@ class PassNode extends TempNode {
 		 * A MRT node configuring the MRT settings.
 		 *
 		 * @private
-		 * @type {MRTNode?}
+		 * @type {?MRTNode}
 		 * @default null
 		 */
 		this._mrt = null;
@@ -319,7 +317,7 @@ class PassNode extends TempNode {
 		/**
 		 * This flag can be used for type testing.
 		 *
-		 * @type {Boolean}
+		 * @type {boolean}
 		 * @readonly
 		 * @default true
 		 */
@@ -329,7 +327,7 @@ class PassNode extends TempNode {
 		 * The `updateBeforeType` is set to `NodeUpdateType.FRAME` since the node renders the
 		 * scene once per frame in its {@link PassNode#updateBefore} method.
 		 *
-		 * @type {String}
+		 * @type {string}
 		 * @default 'frame'
 		 */
 		this.updateBeforeType = NodeUpdateType.FRAME;
@@ -364,7 +362,7 @@ class PassNode extends TempNode {
 	/**
 	 * The method is overwritten so it always returns `true`.
 	 *
-	 * @return {Boolean} Whether this node is global or not.
+	 * @return {boolean} Whether this node is global or not.
 	 */
 	isGlobal() {
 
@@ -375,7 +373,7 @@ class PassNode extends TempNode {
 	/**
 	 * Returns the texture for the given output name.
 	 *
-	 * @param {String} name - The output name to get the texture for.
+	 * @param {string} name - The output name to get the texture for.
 	 * @return {Texture} The texture.
 	 */
 	getTexture( name ) {
@@ -402,7 +400,7 @@ class PassNode extends TempNode {
 	/**
 	 * Returns the texture holding the data of the previous frame for the given output name.
 	 *
-	 * @param {String} name - The output name to get the texture for.
+	 * @param {string} name - The output name to get the texture for.
 	 * @return {Texture} The texture holding the data of the previous frame.
 	 */
 	getPreviousTexture( name ) {
@@ -424,7 +422,7 @@ class PassNode extends TempNode {
 	/**
 	 * Switches current and previous textures for the given output name.
 	 *
-	 * @param {String} name - The output name.
+	 * @param {string} name - The output name.
 	 */
 	toggleTexture( name ) {
 
@@ -450,7 +448,7 @@ class PassNode extends TempNode {
 	/**
 	 * Returns the texture node for the given output name.
 	 *
-	 * @param {String} [name='output'] - The output name to get the texture node for.
+	 * @param {string} [name='output'] - The output name to get the texture node for.
 	 * @return {TextureNode} The texture node.
 	 */
 	getTextureNode( name = 'output' ) {
@@ -472,7 +470,7 @@ class PassNode extends TempNode {
 	/**
 	 * Returns the previous texture node for the given output name.
 	 *
-	 * @param {String} [name='output'] - The output name to get the previous texture node for.
+	 * @param {string} [name='output'] - The output name to get the previous texture node for.
 	 * @return {TextureNode} The previous texture node.
 	 */
 	getPreviousTextureNode( name = 'output' ) {
@@ -496,7 +494,7 @@ class PassNode extends TempNode {
 	/**
 	 * Returns a viewZ node of this pass.
 	 *
-	 * @param {String} [name='depth'] - The output name to get the viewZ node for. In most cases the default `'depth'` can be used however the parameter exists for custom depth outputs.
+	 * @param {string} [name='depth'] - The output name to get the viewZ node for. In most cases the default `'depth'` can be used however the parameter exists for custom depth outputs.
 	 * @return {Node} The viewZ node.
 	 */
 	getViewZNode( name = 'depth' ) {
@@ -519,7 +517,7 @@ class PassNode extends TempNode {
 	/**
 	 * Returns a linear depth node of this pass.
 	 *
-	 * @param {String} [name='depth'] - The output name to get the linear depth node for. In most cases the default `'depth'` can be used however the parameter exists for custom depth outputs.
+	 * @param {string} [name='depth'] - The output name to get the linear depth node for. In most cases the default `'depth'` can be used however the parameter exists for custom depth outputs.
 	 * @return {Node} The linear depth node.
 	 */
 	getLinearDepthNode( name = 'depth' ) {
@@ -546,12 +544,14 @@ class PassNode extends TempNode {
 
 		this.renderTarget.samples = this.options.samples === undefined ? renderer.samples : this.options.samples;
 
-		// Disable MSAA for WebGL backend for now
+		// TODO: Disable MSAA for WebGL backend for now
 		if ( renderer.backend.isWebGLBackend === true ) {
 
 			this.renderTarget.samples = 0;
 
 		}
+
+		this.renderTarget.texture.type = renderer.getColorBufferType();
 
 		return this.scope === PassNode.COLOR ? this.getTextureNode() : this.getLinearDepthNode();
 
@@ -560,13 +560,34 @@ class PassNode extends TempNode {
 	updateBefore( frame ) {
 
 		const { renderer } = frame;
-		const { scene, camera } = this;
+		const { scene } = this;
 
-		this._pixelRatio = renderer.getPixelRatio();
+		let camera;
+		let pixelRatio;
 
-		const size = renderer.getSize( _size );
+		const outputRenderTarget = renderer.getOutputRenderTarget();
 
-		this.setSize( size.width, size.height );
+		if ( outputRenderTarget && outputRenderTarget.isXRRenderTarget === true ) {
+
+			pixelRatio = 1;
+			camera = renderer.xr.getCamera();
+
+			renderer.xr.updateCamera( camera );
+
+			_size.set( outputRenderTarget.width, outputRenderTarget.height );
+
+		} else {
+
+			camera = this.camera;
+			pixelRatio = renderer.getPixelRatio();
+
+			renderer.getSize( _size );
+
+		}
+
+		this._pixelRatio = pixelRatio;
+
+		this.setSize( _size.width, _size.height );
 
 		const currentRenderTarget = renderer.getRenderTarget();
 		const currentMRT = renderer.getMRT();
@@ -593,8 +614,8 @@ class PassNode extends TempNode {
 	/**
 	 * Sets the size of the pass's render target. Honors the pixel ratio.
 	 *
-	 * @param {Number} width - The width to set.
-	 * @param {Number} height - The height to set.
+	 * @param {number} width - The width to set.
+	 * @param {number} height - The height to set.
 	 */
 	setSize( width, height ) {
 
@@ -611,7 +632,7 @@ class PassNode extends TempNode {
 	/**
 	 * Sets the pixel ratio the pass's render target and updates the size.
 	 *
-	 * @param {Number} pixelRatio - The pixel ratio to set.
+	 * @param {number} pixelRatio - The pixel ratio to set.
 	 */
 	setPixelRatio( pixelRatio ) {
 
@@ -638,6 +659,37 @@ PassNode.DEPTH = 'depth';
 
 export default PassNode;
 
+/**
+ * TSL function for creating a pass node.
+ *
+ * @tsl
+ * @function
+ * @param {Scene} scene - A reference to the scene.
+ * @param {Camera} camera - A reference to the camera.
+ * @param {Object} options - Options for the internal render target.
+ * @returns {PassNode}
+ */
 export const pass = ( scene, camera, options ) => nodeObject( new PassNode( PassNode.COLOR, scene, camera, options ) );
+
+/**
+ * TSL function for creating a pass texture node.
+ *
+ * @tsl
+ * @function
+ * @param {PassNode} pass - The pass node.
+ * @param {Texture} texture - The output texture.
+ * @returns {PassTextureNode}
+ */
 export const passTexture = ( pass, texture ) => nodeObject( new PassTextureNode( pass, texture ) );
-export const depthPass = ( scene, camera ) => nodeObject( new PassNode( PassNode.DEPTH, scene, camera ) );
+
+/**
+ * TSL function for creating a depth pass node.
+ *
+ * @tsl
+ * @function
+ * @param {Scene} scene - A reference to the scene.
+ * @param {Camera} camera - A reference to the camera.
+ * @param {Object} options - Options for the internal render target.
+ * @returns {PassNode}
+ */
+export const depthPass = ( scene, camera, options ) => nodeObject( new PassNode( PassNode.DEPTH, scene, camera, options ) );

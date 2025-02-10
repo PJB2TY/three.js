@@ -16,8 +16,8 @@ const _cache = new WeakMap();
  * Generates the cubeUV size based on the given image height.
  *
  * @private
- * @param {Number} imageHeight - The image height.
- * @return {{texelWidth: Number,texelHeight: Number, maxMip: Number}} The result object.
+ * @param {number} imageHeight - The image height.
+ * @return {{texelWidth: number,texelHeight: number, maxMip: number}} The result object.
  */
 function _generateCubeUVSize( imageHeight ) {
 
@@ -107,7 +107,7 @@ class PMREMNode extends TempNode {
 	/**
 	 * Constructs a new function overloading node.
 	 *
-	 * @param {Texture} texture - The input texture.
+	 * @param {Texture} value - The input texture.
 	 * @param {Node<vec2>} [uvNode=null] - The uv node.
 	 * @param {Node<float>} [levelNode=null] - The level node.
 	 */
@@ -127,7 +127,7 @@ class PMREMNode extends TempNode {
 		 * Reference to the generated PMREM.
 		 *
 		 * @private
-		 * @type {Texture}
+		 * @type {Texture | null}
 		 * @default null
 		 */
 		this._pmrem = null;
@@ -193,10 +193,17 @@ class PMREMNode extends TempNode {
 		/**
 		 * The `updateBeforeType` is set to `NodeUpdateType.RENDER`.
 		 *
-		 * @type {String}
+		 * @type {string}
 		 * @default 'render'
 		 */
 		this.updateBeforeType = NodeUpdateType.RENDER;
+
+	}
+
+	set value( value ) {
+
+		this._value = value;
+		this._pmrem = null;
 
 	}
 
@@ -205,13 +212,6 @@ class PMREMNode extends TempNode {
 	 *
 	 * @type {Texture}
 	 */
-	set value( value ) {
-
-		this._value = value;
-		this._pmrem = null;
-
-	}
-
 	get value() {
 
 		return this._value;
@@ -324,7 +324,7 @@ export default PMREMNode;
  *
  * @private
  * @param {Array<(Image|Object)>} image - The cube map image.
- * @return {Boolean} Whether the given cube map is ready or not.
+ * @return {boolean} Whether the given cube map is ready or not.
  */
 function isCubeMapReady( image ) {
 
@@ -349,7 +349,7 @@ function isCubeMapReady( image ) {
  *
  * @private
  * @param {(Image|Object)} image - The equirectangular image.
- * @return {Boolean} Whether the given cube map is ready or not.
+ * @return {boolean} Whether the given cube map is ready or not.
  */
 function isEquirectangularMapReady( image ) {
 
@@ -359,4 +359,14 @@ function isEquirectangularMapReady( image ) {
 
 }
 
+/**
+ * TSL function for creating a PMREM node.
+ *
+ * @tsl
+ * @function
+ * @param {Texture} value - The input texture.
+ * @param {Node<vec2>} [uvNode=null] - The uv node.
+ * @param {Node<float>} [levelNode=null] - The level node.
+ * @returns {PMREMNode}
+ */
 export const pmremTexture = /*@__PURE__*/ nodeProxy( PMREMNode );

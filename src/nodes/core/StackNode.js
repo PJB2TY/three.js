@@ -19,7 +19,7 @@ class StackNode extends Node {
 	/**
 	 * Constructs a new stack node.
 	 *
-	 * @param {StackNode?} [parent=null] - The parent stack node.
+	 * @param {?StackNode} [parent=null] - The parent stack node.
 	 */
 	constructor( parent = null ) {
 
@@ -35,7 +35,7 @@ class StackNode extends Node {
 		/**
 		 * The output node.
 		 *
-		 * @type {Node?}
+		 * @type {?Node}
 		 * @default null
 		 */
 		this.outputNode = null;
@@ -43,7 +43,7 @@ class StackNode extends Node {
 		/**
 		 * The parent stack node.
 		 *
-		 * @type {StackNode}
+		 * @type {?StackNode}
 		 * @default null
 		 */
 		this.parent = parent;
@@ -60,7 +60,7 @@ class StackNode extends Node {
 		/**
 		 * This flag can be used for type testing.
 		 *
-		 * @type {Boolean}
+		 * @type {boolean}
 		 * @readonly
 		 * @default true
 		 */
@@ -71,6 +71,12 @@ class StackNode extends Node {
 	getNodeType( builder ) {
 
 		return this.outputNode ? this.outputNode.getNodeType( builder ) : 'void';
+
+	}
+
+	getMemberType( builder, name ) {
+
+		return this.outputNode ? this.outputNode.getMemberType( builder, name ) : 'void';
 
 	}
 
@@ -155,8 +161,15 @@ class StackNode extends Node {
 
 	}
 
-	//
+	// Deprecated
 
+	/**
+	 * @function
+	 * @deprecated since r168. Use {@link StackNode#Else} instead.
+	 *
+	 * @param  {...any} params
+	 * @returns {StackNode}
+	 */
 	else( ...params ) { // @deprecated, r168
 
 		console.warn( 'TSL.StackNode: .else() has been renamed to .Else().' );
@@ -164,6 +177,12 @@ class StackNode extends Node {
 
 	}
 
+	/**
+	 * @deprecated since r168. Use {@link StackNode#ElseIf} instead.
+	 *
+	 * @param  {...any} params
+	 * @returns {StackNode}
+	 */
 	elseif( ...params ) { // @deprecated, r168
 
 		console.warn( 'TSL.StackNode: .elseif() has been renamed to .ElseIf().' );
@@ -175,4 +194,12 @@ class StackNode extends Node {
 
 export default StackNode;
 
+/**
+ * TSL function for creating a stack node.
+ *
+ * @tsl
+ * @function
+ * @param {?StackNode} [parent=null] - The parent stack node.
+ * @returns {StackNode}
+ */
 export const stack = /*@__PURE__*/ nodeProxy( StackNode );

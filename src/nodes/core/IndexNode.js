@@ -25,7 +25,7 @@ class IndexNode extends Node {
 	/**
 	 * Constructs a new index node.
 	 *
-	 * @param {('vertex'|'instance'|'subgroup'|'invocationLocal'|'invocationSubgroup'|'draw')} value - The scope of the index node.
+	 * @param {('vertex'|'instance'|'subgroup'|'invocationLocal'|'invocationSubgroup'|'draw')} scope - The scope of the index node.
 	 */
 	constructor( scope ) {
 
@@ -34,14 +34,14 @@ class IndexNode extends Node {
 		/**
 		 * The scope of the index node.
 		 *
-		 * @type {String}
+		 * @type {string}
 		 */
 		this.scope = scope;
 
 		/**
 		 * This flag can be used for type testing.
 		 *
-		 * @type {Boolean}
+		 * @type {boolean}
 		 * @readonly
 		 * @default true
 		 */
@@ -115,9 +115,50 @@ IndexNode.DRAW = 'draw';
 
 export default IndexNode;
 
+/**
+ * TSL object that represents the index of a vertex within a mesh.
+ *
+ * @tsl
+ * @type {IndexNode}
+ */
 export const vertexIndex = /*@__PURE__*/ nodeImmutable( IndexNode, IndexNode.VERTEX );
+
+/**
+ * TSL object that represents the index of either a mesh instance or an invocation of a compute shader.
+ *
+ * @tsl
+ * @type {IndexNode}
+ */
 export const instanceIndex = /*@__PURE__*/ nodeImmutable( IndexNode, IndexNode.INSTANCE );
+
+/**
+ * TSL object that represents the index of the subgroup the current compute invocation belongs to.
+ *
+ * @tsl
+ * @type {IndexNode}
+ */
 export const subgroupIndex = /*@__PURE__*/ nodeImmutable( IndexNode, IndexNode.SUBGROUP );
+
+/**
+ * TSL object that represents the index of a compute invocation within the scope of a subgroup.
+ *
+ * @tsl
+ * @type {IndexNode}
+ */
 export const invocationSubgroupIndex = /*@__PURE__*/ nodeImmutable( IndexNode, IndexNode.INVOCATION_SUBGROUP );
+
+/**
+ * TSL object that represents the index of a compute invocation within the scope of a workgroup load.
+ *
+ * @tsl
+ * @type {IndexNode}
+ */
 export const invocationLocalIndex = /*@__PURE__*/ nodeImmutable( IndexNode, IndexNode.INVOCATION_LOCAL );
+
+/**
+ * TSL object that represents the index of a draw call.
+ *
+ * @tsl
+ * @type {IndexNode}
+ */
 export const drawIndex = /*@__PURE__*/ nodeImmutable( IndexNode, IndexNode.DRAW );

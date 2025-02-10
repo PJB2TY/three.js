@@ -15,7 +15,7 @@ class ArrayElementNode extends Node { // @TODO: If extending from TempNode it br
 	}
 
 	/**
-	 * Constructs array element node.
+	 * Constructs an array element node.
 	 *
 	 * @param {Node} node - The array-like node.
 	 * @param {Node} indexNode - The index node that defines the element access.
@@ -41,7 +41,7 @@ class ArrayElementNode extends Node { // @TODO: If extending from TempNode it br
 		/**
 		 * This flag can be used for type testing.
 		 *
-		 * @type {Boolean}
+		 * @type {boolean}
 		 * @readonly
 		 * @default true
 		 */
@@ -53,7 +53,7 @@ class ArrayElementNode extends Node { // @TODO: If extending from TempNode it br
 	 * This method is overwritten since the node type is inferred from the array-like node.
 	 *
 	 * @param {NodeBuilder} builder - The current node builder.
-	 * @return {String} The node type.
+	 * @return {string} The node type.
 	 */
 	getNodeType( builder ) {
 
@@ -66,7 +66,7 @@ class ArrayElementNode extends Node { // @TODO: If extending from TempNode it br
 		const nodeSnippet = this.node.build( builder );
 		const indexSnippet = this.indexNode.build( builder, 'uint' );
 
-		return `${nodeSnippet}[ ${indexSnippet} ]`;
+		return `${ nodeSnippet }[ ${ indexSnippet } ]`;
 
 	}
 

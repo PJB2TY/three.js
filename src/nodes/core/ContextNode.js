@@ -32,7 +32,7 @@ class ContextNode extends Node {
 		/**
 		 * This flag can be used for type testing.
 		 *
-		 * @type {Boolean}
+		 * @type {boolean}
 		 * @readonly
 		 * @default true
 		 */
@@ -67,10 +67,10 @@ class ContextNode extends Node {
 	}
 
 	/**
-	 * This method is overwritten to ensure it returns the type to {@link ContextNode#node}.
+	 * This method is overwritten to ensure it returns the type of {@link ContextNode#node}.
 	 *
 	 * @param {NodeBuilder} builder - The current node builder.
-	 * @return {String} The type of {@link ContextNode#node}.
+	 * @return {string} The node type.
 	 */
 	getNodeType( builder ) {
 
@@ -116,7 +116,26 @@ class ContextNode extends Node {
 
 export default ContextNode;
 
+/**
+ * TSL function for creating a context node.
+ *
+ * @tsl
+ * @function
+ * @param {Node} node - The node whose context should be modified.
+ * @param {Object} [value={}] - The modified context data.
+ * @returns {ContextNode}
+ */
 export const context = /*@__PURE__*/ nodeProxy( ContextNode );
+
+/**
+ * TSL function for defining a label context value for a given node.
+ *
+ * @tsl
+ * @function
+ * @param {Node} node - The node whose context should be modified.
+ * @param {string} name - The name/label to set.
+ * @returns {ContextNode}
+ */
 export const label = ( node, name ) => context( node, { label: name } );
 
 addMethodChaining( 'context', context );

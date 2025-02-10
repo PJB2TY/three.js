@@ -21,7 +21,7 @@ class ToneMappingNode extends TempNode {
 	/**
 	 * Constructs a new tone mapping node.
 	 *
-	 * @param {Number} toneMapping - The tone mapping type.
+	 * @param {number} toneMapping - The tone mapping type.
 	 * @param {Node} exposureNode - The tone mapping exposure.
 	 * @param {Node} [colorNode=null] - The color node to process.
 	 */
@@ -32,7 +32,7 @@ class ToneMappingNode extends TempNode {
 		/**
 		 * The tone mapping type.
 		 *
-		 * @type {Number}
+		 * @type {number}
 		 */
 		this.toneMapping = toneMapping;
 
@@ -47,7 +47,7 @@ class ToneMappingNode extends TempNode {
 		/**
 		 * Represents the color to process.
 		 *
-		 * @type {Node}
+		 * @type {?Node}
 		 * @default null
 		 */
 		this.colorNode = colorNode;
@@ -58,7 +58,7 @@ class ToneMappingNode extends TempNode {
 	 * Overwrites the default `customCacheKey()` implementation by including the tone
 	 * mapping type into the cache key.
 	 *
-	 * @return {Number} The hash.
+	 * @return {number} The hash.
 	 */
 	customCacheKey() {
 
@@ -97,7 +97,24 @@ class ToneMappingNode extends TempNode {
 
 export default ToneMappingNode;
 
+/**
+ * TSL function for creating a tone mapping node.
+ *
+ * @tsl
+ * @function
+ * @param {number} mapping - The tone mapping type.
+ * @param {Node<float> | number} exposure - The tone mapping exposure.
+ * @param {Node<vec3> | Color} color - The color node to process.
+ * @returns {ToneMappingNode<vec3>}
+ */
 export const toneMapping = ( mapping, exposure, color ) => nodeObject( new ToneMappingNode( mapping, nodeObject( exposure ), nodeObject( color ) ) );
+
+/**
+ * TSL object that represents the global tone mapping exposure of the renderer.
+ *
+ * @tsl
+ * @type {RendererReferenceNode<vec3>}
+ */
 export const toneMappingExposure = /*@__PURE__*/ rendererReference( 'toneMappingExposure', 'float' );
 
 addMethodChaining( 'toneMapping', ( color, mapping, exposure ) => toneMapping( mapping, exposure, color ) );

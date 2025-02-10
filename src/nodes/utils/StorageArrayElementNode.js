@@ -23,7 +23,7 @@ class StorageArrayElementNode extends ArrayElementNode {
 	/**
 	 * Constructs storage buffer element node.
 	 *
-	 * @param {StorageBufferNode} node - The storage buffer node.
+	 * @param {StorageBufferNode} storageBufferNode - The storage buffer node.
 	 * @param {Node} indexNode - The index node that defines the element access.
 	 */
 	constructor( storageBufferNode, indexNode ) {
@@ -33,7 +33,7 @@ class StorageArrayElementNode extends ArrayElementNode {
 		/**
 		 * This flag can be used for type testing.
 		 *
-		 * @type {Boolean}
+		 * @type {boolean}
 		 * @readonly
 		 * @default true
 		 */
@@ -44,6 +44,7 @@ class StorageArrayElementNode extends ArrayElementNode {
 	/**
 	 * The storage buffer node.
 	 *
+	 * @param {Node} value
 	 * @type {StorageBufferNode}
 	 */
 	set storageBufferNode( value ) {
@@ -55,6 +56,20 @@ class StorageArrayElementNode extends ArrayElementNode {
 	get storageBufferNode() {
 
 		return this.node;
+
+	}
+
+	getMemberType( builder, name ) {
+
+		const structTypeNode = this.storageBufferNode.structTypeNode;
+
+		if ( structTypeNode ) {
+
+			return structTypeNode.getMemberType( builder, name );
+
+		}
+
+		return 'void';
 
 	}
 
@@ -116,4 +131,13 @@ class StorageArrayElementNode extends ArrayElementNode {
 
 export default StorageArrayElementNode;
 
+/**
+ * TSL function for creating a storage element node.
+ *
+ * @tsl
+ * @function
+ * @param {StorageBufferNode} storageBufferNode - The storage buffer node.
+ * @param {Node} indexNode - The index node that defines the element access.
+ * @returns {StorageArrayElementNode}
+ */
 export const storageElement = /*@__PURE__*/ nodeProxy( StorageArrayElementNode );
