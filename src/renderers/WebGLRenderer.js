@@ -193,6 +193,9 @@ class WebGLRenderer {
 		let _clippingEnabled = false;
 		let _localClippingEnabled = false;
 
+		// transmission render target scale
+		this.transmissionResolutionScale = 1.0;
+
 		// camera matrices cache
 
 		const _currentProjectionMatrix = new Matrix4();
@@ -519,7 +522,7 @@ class WebGLRenderer {
 
 		this.setClearColor = function () {
 
-			background.setClearColor.apply( background, arguments );
+			background.setClearColor( ...arguments );
 
 		};
 
@@ -531,7 +534,7 @@ class WebGLRenderer {
 
 		this.setClearAlpha = function () {
 
-			background.setClearAlpha.apply( background, arguments );
+			background.setClearAlpha( ...arguments );
 
 		};
 
@@ -867,6 +870,8 @@ class WebGLRenderer {
 
 				if ( object._multiDrawInstances !== null ) {
 
+					// @deprecated, r174
+					warnOnce( 'THREE.WebGLRenderer: renderMultiDrawInstances has been deprecated and will be removed in r184. Append to renderMultiDraw arguments and use indirection.' );
 					renderer.renderMultiDrawInstances( object._multiDrawStarts, object._multiDrawCounts, object._multiDrawCount, object._multiDrawInstances );
 
 				} else {
@@ -1023,8 +1028,7 @@ class WebGLRenderer {
 
 			} );
 
-			renderStateStack.pop();
-			currentRenderState = null;
+			currentRenderState = renderStateStack.pop();
 
 			return materials;
 
@@ -1269,7 +1273,7 @@ class WebGLRenderer {
 
 			//
 
-			if ( _currentRenderTarget !== null ) {
+			if ( _currentRenderTarget !== null && _currentActiveMipmapLevel === 0 ) {
 
 				// resolve multisample renderbuffers to a single-sample texture if necessary
 
@@ -1497,7 +1501,7 @@ class WebGLRenderer {
 			const transmissionRenderTarget = currentRenderState.state.transmissionRenderTarget[ camera.id ];
 
 			const activeViewport = camera.viewport || _currentViewport;
-			transmissionRenderTarget.setSize( activeViewport.z, activeViewport.w );
+			transmissionRenderTarget.setSize( activeViewport.z * _this.transmissionResolutionScale, activeViewport.w * _this.transmissionResolutionScale );
 
 			//
 
@@ -2264,6 +2268,7 @@ class WebGLRenderer {
 
 		};
 
+		const _scratchFrameBuffer = _gl.createFramebuffer();
 		this.setRenderTarget = function ( renderTarget, activeCubeFace = 0, activeMipmapLevel = 0 ) {
 
 			_currentRenderTarget = renderTarget;
@@ -2372,6 +2377,14 @@ class WebGLRenderer {
 
 			}
 
+			// Use a scratch frame buffer if rendering to a mip level to avoid depth buffers
+			// being bound that are different sizes.
+			if ( activeMipmapLevel !== 0 ) {
+
+				framebuffer = _scratchFrameBuffer;
+
+			}
+
 			const framebufferBound = state.bindFramebuffer( _gl.FRAMEBUFFER, framebuffer );
 
 			if ( framebufferBound && useDefaultFramebuffer ) {
@@ -2392,8 +2405,15 @@ class WebGLRenderer {
 			} else if ( isRenderTarget3D ) {
 
 				const textureProperties = properties.get( renderTarget.texture );
-				const layer = activeCubeFace || 0;
-				_gl.framebufferTextureLayer( _gl.FRAMEBUFFER, _gl.COLOR_ATTACHMENT0, textureProperties.__webglTexture, activeMipmapLevel || 0, layer );
+				const layer = activeCubeFace;
+				_gl.framebufferTextureLayer( _gl.FRAMEBUFFER, _gl.COLOR_ATTACHMENT0, textureProperties.__webglTexture, activeMipmapLevel, layer );
+
+			} else if ( renderTarget !== null && activeMipmapLevel !== 0 ) {
+
+				// Only bind the frame buffer if we are using a scratch frame buffer to render to a mipmap.
+				// If we rebind the texture when using a multi sample buffer then an error about inconsistent samples will be thrown.
+				const textureProperties = properties.get( renderTarget.texture );
+				_gl.framebufferTexture2D( _gl.FRAMEBUFFER, _gl.COLOR_ATTACHMENT0, _gl.TEXTURE_2D, textureProperties.__webglTexture, activeMipmapLevel );
 
 			}
 
@@ -2538,17 +2558,6 @@ class WebGLRenderer {
 
 		this.copyFramebufferToTexture = function ( texture, position = null, level = 0 ) {
 
-			// support previous signature with position first
-			if ( texture.isTexture !== true ) {
-
-				// @deprecated, r165
-				warnOnce( 'WebGLRenderer: copyFramebufferToTexture function signature has changed.' );
-
-				position = arguments[ 0 ] || null;
-				texture = arguments[ 1 ];
-
-			}
-
 			const levelScale = Math.pow( 2, - level );
 			const width = Math.floor( texture.image.width * levelScale );
 			const height = Math.floor( texture.image.height * levelScale );
@@ -2567,20 +2576,6 @@ class WebGLRenderer {
 		const _srcFramebuffer = _gl.createFramebuffer();
 		const _dstFramebuffer = _gl.createFramebuffer();
 		this.copyTextureToTexture = function ( srcTexture, dstTexture, srcRegion = null, dstPosition = null, srcLevel = 0, dstLevel = null ) {
-
-			// support previous signature with dstPosition first
-			if ( srcTexture.isTexture !== true ) {
-
-				// @deprecated, r165
-				warnOnce( 'WebGLRenderer: copyTextureToTexture function signature has changed.' );
-
-				dstPosition = arguments[ 0 ] || null;
-				srcTexture = arguments[ 1 ];
-				dstTexture = arguments[ 2 ];
-				dstLevel = arguments[ 3 ] || 0;
-				srcRegion = null;
-
-			}
 
 			// support the previous signature with just a single dst mipmap level
 			if ( dstLevel === null ) {
@@ -2833,20 +2828,6 @@ class WebGLRenderer {
 		};
 
 		this.copyTextureToTexture3D = function ( srcTexture, dstTexture, srcRegion = null, dstPosition = null, level = 0 ) {
-
-			// support previous signature with source box first
-			if ( srcTexture.isTexture !== true ) {
-
-				// @deprecated, r165
-				warnOnce( 'WebGLRenderer: copyTextureToTexture3D function signature has changed.' );
-
-				srcRegion = arguments[ 0 ] || null;
-				dstPosition = arguments[ 1 ] || null;
-				srcTexture = arguments[ 2 ];
-				dstTexture = arguments[ 3 ];
-				level = arguments[ 4 ] || 0;
-
-			}
 
 			// @deprecated, r170
 			warnOnce( 'WebGLRenderer: copyTextureToTexture3D function has been deprecated. Use "copyTextureToTexture" instead.' );

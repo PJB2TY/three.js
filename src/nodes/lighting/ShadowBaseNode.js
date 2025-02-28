@@ -1,8 +1,17 @@
 import Node from '../core/Node.js';
 import { NodeUpdateType } from '../core/constants.js';
-import { vec3 } from '../tsl/TSLBase.js';
+import { property } from '../tsl/TSLBase.js';
 import { positionWorld } from '../accessors/Position.js';
 
+/**
+ * Base class for all shadow nodes.
+ *
+ * Shadow nodes encapsulate shadow related logic and are always coupled to lighting nodes.
+ * Lighting nodes might share the same shadow node type or use specific ones depending on
+ * their requirements.
+ *
+ * @augments Node
+ */
 class ShadowBaseNode extends Node {
 
 	static get type() {
@@ -11,25 +20,59 @@ class ShadowBaseNode extends Node {
 
 	}
 
+	/**
+	 * Constructs a new shadow base node.
+	 *
+	 * @param {Light} light - The shadow casting light.
+	 */
 	constructor( light ) {
 
 		super();
 
+		/**
+		 * The shadow casting light.
+		 *
+		 * @type {Light}
+		 */
 		this.light = light;
+
+		/**
+		 * Overwritten since shadows are updated by default per render.
+		 *
+		 * @type {string}
+		 * @default 'render'
+		 */
 		this.updateBeforeType = NodeUpdateType.RENDER;
 
+		/**
+		 * This flag can be used for type testing.
+		 *
+		 * @type {boolean}
+		 * @readonly
+		 * @default true
+		 */
 		this.isShadowBaseNode = true;
 
 	}
 
-	setupShadowPosition( { material } ) {
+	/**
+	 * Setups the shadow position node which is by default the predefined TSL node object `shadowPositionWorld`.
+	 *
+	 * @param {NodeBuilder} object - A configuration object that must at least hold a material reference.
+	 */
+	setupShadowPosition( { context, material } ) {
 
 		// Use assign inside an Fn()
 
-		shadowWorldPosition.assign( material.shadowPositionNode || positionWorld );
+		shadowPositionWorld.assign( material.shadowPositionNode || context.shadowPositionWorld || positionWorld );
 
 	}
 
+	/**
+	 * Can be called when the shadow isn't required anymore. That can happen when
+	 * a lighting node stops casting shadows by setting {@link Object3D#castShadow}
+	 * to `false`.
+	 */
 	dispose() {
 
 		this.updateBeforeType = NodeUpdateType.NONE;
@@ -38,6 +81,12 @@ class ShadowBaseNode extends Node {
 
 }
 
-export const shadowWorldPosition = /*@__PURE__*/ vec3().toVar( 'shadowWorldPosition' );
+/**
+ * TSL object that represents the vertex position in world space during the shadow pass.
+ *
+ * @tsl
+ * @type {Node<vec3>}
+ */
+export const shadowPositionWorld = /*@__PURE__*/ property( 'vec3', 'shadowPositionWorld' );
 
 export default ShadowBaseNode;

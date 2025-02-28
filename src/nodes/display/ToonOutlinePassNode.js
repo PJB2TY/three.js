@@ -68,7 +68,7 @@ class ToonOutlinePassNode extends PassNode {
 		 * An internal material cache.
 		 *
 		 * @private
-		 * @type {WeakMap}
+		 * @type {WeakMap<Material, NodeMaterial>}
 		 */
 		this._materialCache = new WeakMap();
 
@@ -141,7 +141,7 @@ class ToonOutlinePassNode extends PassNode {
 	}
 
 	/**
-	 * For the given toon material, this method returns a correspoding
+	 * For the given toon material, this method returns a corresponding
 	 * outline material.
 	 *
 	 * @private
@@ -168,4 +168,16 @@ class ToonOutlinePassNode extends PassNode {
 
 export default ToonOutlinePassNode;
 
+/**
+ * TSL function for creating a toon outline pass node.
+ *
+ * @tsl
+ * @function
+ * @param {Scene} scene - A reference to the scene.
+ * @param {Camera} camera - A reference to the camera.
+ * @param {Color} color - Defines the outline's color.
+ * @param {number} [thickness=0.003] - Defines the outline's thickness.
+ * @param {number} [alpha=1] - Defines the outline's alpha.
+ * @returns {ToonOutlinePassNode}
+ */
 export const toonOutlinePass = ( scene, camera, color = new Color( 0, 0, 0 ), thickness = 0.003, alpha = 1 ) => nodeObject( new ToonOutlinePassNode( scene, camera, nodeObject( color ), nodeObject( thickness ), nodeObject( alpha ) ) );
